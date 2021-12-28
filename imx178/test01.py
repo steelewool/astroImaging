@@ -6,7 +6,7 @@
 import dvrip as dvr
 import cv2
 import time
-
+import os
 
 deviceInfo = 'rtsp://192.168.42.10:554/user=admin&password=&channel=1&stream=0.sdp'
 
@@ -60,20 +60,18 @@ print ('capture.get(cv2.CAP_PROP_CONVERT_RGB)    : ', capture.get(cv2.CAP_PROP_C
 #print ('capture.get(cv2.CAP_PROP_WHITE_BALANCE) : ', capture.get(cv2.CAP_PROP_WHITE_BALANCE)) unsupported
 print ('capture.get(cv2.CAP_PROP_RECTIFICATION)  : ', capture.get(cv2.CAP_PROP_RECTIFICATION))
 
-#print ('Set FPS to 100')
-#capture.set(cv2.CAP_PROP_FPS, 100)
-#time.sleep(1)
-#print ('capture.get(cv2.CAP_PROP_FPS)            : ', capture.get(cv2.CAP_PROP_FPS))
+# Setting using the CAP options doesn't seem to be working - but using the Utils.CameraControl program
+# from the RMS software does seem to be working
 
-print ('set exposure to -5')
-capture.set(cv2.CAP_PROP_EXPOSURE, -5.0)
-time.sleep(2)
-print ('capture.get(cv2.CAP_PROP_EXPOSURE)       : ', capture.get(cv2.CAP_PROP_EXPOSURE))
+os.system("cd /home/pi/source/RMS; python -m Utils.CameraControl GetCameraParams")
 
-print ('set exposure to 5')
-capture.set(cv2.CAP_PROP_EXPOSURE, 5.0)
-time.sleep(2)
-print ('capture.get(cv2.CAP_PROP_EXPOSURE)       : ', capture.get(cv2.CAP_PROP_EXPOSURE))
+# Set the minimum exposure time to 39999
+
+os.system("cd /home/pi/source/RMS; python -m Utils.CameraControl SetParam Camera ExposureTime 40000")
+
+os.system("cd /home/pi/source/RMS; python -m Utils.CameraControl SetParam Camera ExposureParam 79998 79999")
+
+os.system("cd /home/pi/source/RMS; python -m Utils.CameraControl GetCameraParams")
 
 while (True):
 	ret, imageFrame = capture.read()
